@@ -16,13 +16,8 @@ void AMyFirstActor::BeginPlay()
 
 	SetRandomRotationRate();
 	
-	auto message = FString::Printf(TEXT("Initial rotation rate is %f"), CurrentRotationRate);
-	GEngine->AddOnScreenDebugMessage(0, 5, TextColor, message);
-}
-
-void AMyFirstActor::SetRandomRotationRate()
-{
-	CurrentRotationRate = FMath::RandRange(MinimumRotationRate, MaximumRotationRate);
+	FString message = FString::Printf(TEXT("Initial rotation rate is %f"), CurrentRotationRate);
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, TextColor, message);
 }
 
 // Called every frame
@@ -35,3 +30,7 @@ void AMyFirstActor::Tick(float DeltaTime)
 	SetActorRotation(rotation);
 }
 
+void AMyFirstActor::SetRandomRotationRate()
+{
+	CurrentRotationRate = FMath::RandRange(MinimumRotationRate, MaximumRotationRate);
+}
