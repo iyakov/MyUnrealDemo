@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MyNewStruct.h"
 #include "GameFramework/Actor.h"
 #include "MyFirstActor.generated.h"
 
@@ -33,6 +34,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	float MaximumRotationRate = 200.0f;
+
+	UPROPERTY(EditAnywhere, Category = "AXYZ")
+	FMyNewStruct MyStruct;
 	
 public:	
 	// Called every frame
