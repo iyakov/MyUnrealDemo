@@ -23,4 +23,4 @@ Other elements:
 - Example structures and enumerations
 - An example build module
 - An example actor
-- ...~~~~
+- ...
