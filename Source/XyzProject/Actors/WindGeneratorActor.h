@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "XYZProject/Data/Types/FWindGeneratorType.h"
+#include "XYZProject/Data/Types/WindGeneratorType.h"
 #include "WindGeneratorActor.generated.h"
 
 UCLASS()
@@ -21,8 +21,11 @@ protected:
 	bool bIsWindGeneratorOn = true;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AXYZ")
-	FWindGeneratorType WindGeneratorType = FWindGeneratorType::Basic; 
+	EWindGeneratorType WindGeneratorType = EWindGeneratorType::Advanced; 
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AXYZ")
+	class UWindGeneratorPropertyDataAsset* WindGeneratorPropertySettings;
+	
 	UFUNCTION(BlueprintCallable)
 	void SwitchWindGenerator(bool bIsOn);
 };
