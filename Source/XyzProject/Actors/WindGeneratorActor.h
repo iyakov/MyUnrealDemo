@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "XYZProject/Data/Types/FWindGeneratorType.h"
 #include "WindGeneratorActor.generated.h"
 
 UCLASS()
@@ -17,7 +18,10 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AXYZ")
-	bool bIsGeneratorOn = true;
+	bool bIsWindGeneratorOn = true;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AXYZ")
+	FWindGeneratorType WindGeneratorType = FWindGeneratorType::Basic; 
 
 	UFUNCTION(BlueprintCallable)
 	void SwitchWindGenerator(bool bIsOn);

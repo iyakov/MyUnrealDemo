@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "XyzProject/Actors/WindGeneratorActor.h"
 #include "WindGeneratorClientComponent.h"
+#include "XyzProject/Actors/WindGeneratorActor.h"
 
 // Called when the game starts
 void UWindGeneratorClientComponent::BeginPlay()

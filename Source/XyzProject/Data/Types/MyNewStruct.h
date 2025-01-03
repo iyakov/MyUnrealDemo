@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CoreMinimal.h"
 #include "MyNewEnum.h"
 #include "MyNewStruct.generated.h"
 

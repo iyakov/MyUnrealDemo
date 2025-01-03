@@ -2,14 +2,13 @@
 
 #include "WindGeneratorActor.h"
 
-
 void AWindGeneratorActor::SwitchWindGenerator(bool bIsOn)
 {
-	bIsGeneratorOn = bIsOn;
+	bIsWindGeneratorOn = bIsOn;
 
 	// notify clients
 	if (OnWindGeneratorSwitched.IsBound())
 	{
-		OnWindGeneratorSwitched.Broadcast(bIsGeneratorOn);
+		OnWindGeneratorSwitched.Broadcast(bIsWindGeneratorOn);
 	}
 }
