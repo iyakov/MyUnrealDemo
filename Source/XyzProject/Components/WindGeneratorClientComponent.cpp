@@ -21,7 +21,7 @@ void UWindGeneratorClientComponent::OnWindGeneratorSwitchedHandler(bool bIsOn) c
 	FString value = bIsOn ? TEXT("On") : TEXT("Off");
 	FString name = GetOwner()->GetName();
 	FString message = FString::Printf(TEXT("OnWindGeneratorSwitched for %s wind generator is %s"), *name, *value);
-	GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Green, message);
+	GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Black, message);
 
 	// forward to blueprint (NB! It's SLOW) 
 	if (OnWindGeneratorClientSwitched.IsBound())
