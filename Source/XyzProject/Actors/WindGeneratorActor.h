@@ -26,6 +26,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AXYZ")
 	class UWindGeneratorPropertyDataAsset* WindGeneratorPropertySettings;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AXYZ")
+	class UCurveFloat* CooldownTimeCurve;
+	
 	UFUNCTION(BlueprintCallable)
 	void SwitchWindGenerator(bool bIsOn);
+
+	UFUNCTION(BlueprintCallable)
+	float GetCooldownTimeFromRotationSpeed(float inRotationSpeed) const;
 };

@@ -1,4 +1,4 @@
 ﻿RowName,RotationSpeed,CooldownTime
-Basic,120,5
-Advanced,360,3
-Ultra,720,1
+Basic,119,5
+Advanced_IntentionalError,359,3
+Ultra,719,1
