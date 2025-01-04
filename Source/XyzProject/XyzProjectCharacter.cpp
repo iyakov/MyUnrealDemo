@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "WheeledVehiclePawn.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -54,6 +55,11 @@ AXyzProjectCharacter::AXyzProjectCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AXyzProjectCharacter::SetActiveCar(AWheeledVehiclePawn* ActiveCar_In)
+{
+	CurrentAvailableCar = ActiveCar_In;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -75,6 +81,9 @@ void AXyzProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
+		
+		// Sitting in a car
+		EnhancedInputComponent->BindAction(SitInACarAction, ETriggerEvent::Triggered, this, &AXyzProjectCharacter::SitInACar);
 		
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
@@ -126,4 +135,18 @@ void AXyzProjectCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AXyzProjectCharacter::SitInACar()
+{
+	AController* CurrentController = GetController();
+
+	if (IsValid(CurrentController))
+	{
+		CurrentController->Possess(CurrentAvailableCar);
+	}
+	
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, TEXT("Attaching a third person pawn to the vehicle"));
+	AttachToActor(CurrentAvailableCar, FAttachmentTransformRules::KeepRelativeTransform);
+	SetActorRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
 }
