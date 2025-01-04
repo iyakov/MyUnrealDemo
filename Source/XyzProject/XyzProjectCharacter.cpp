@@ -148,5 +148,7 @@ void AXyzProjectCharacter::SitInACar()
 	
 	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, TEXT("Attaching a third person pawn to the vehicle"));
 	AttachToActor(CurrentAvailableCar, FAttachmentTransformRules::KeepRelativeTransform);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetVisibility(false);
 	SetActorRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
 }

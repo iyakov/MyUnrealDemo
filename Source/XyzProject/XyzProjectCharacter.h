@@ -50,6 +50,7 @@ class AXyzProjectCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
+	
 	AXyzProjectCharacter();
 
 	UFUNCTION(BlueprintCallable)
@@ -73,12 +74,15 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-private:
+protected:
+	
+	UPROPERTY(BlueprintReadOnly)
 	AWheeledVehiclePawn* CurrentAvailableCar;
 };
 
