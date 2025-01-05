@@ -40,6 +40,10 @@ class AXyzProjectCharacter : public ACharacter
 	/** Sit in a car Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SitInACarAction;
+	
+	/** Throw cube forward Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ThrowCubeAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -48,12 +52,24 @@ class AXyzProjectCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
-
+	
 protected:
 	
 	/** Active vehicle in range if any */
 	UPROPERTY(BlueprintReadOnly, Category = "AXYZ")
 	AWheeledVehiclePawn* CurrentAvailableCar;
+	
+	/** Item type to trow */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "AXYZ")
+	TSubclassOf<AActor> ThrowItemType;
+	
+	/** Position to throw from */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "AXYZ")
+	FVector ThrowOffset = FVector::ZeroVector;
+
+	/** Initiatial throw speed */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "AXYZ")
+	float ThrowStartSpeed = 100.0f;
 
 public:
 	
@@ -73,6 +89,9 @@ protected:
 
 	/** Called for setting in a car input */
 	void SitInACar();
+	
+	/** Called for setting in a car input */
+	void ThrowCube();
 
 protected:
 

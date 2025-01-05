@@ -87,6 +87,9 @@ void AXyzProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		// Sitting in a car
 		EnhancedInputComponent->BindAction(SitInACarAction, ETriggerEvent::Triggered, this, &AXyzProjectCharacter::SitInACar);
 		
+		// Throwing cubes
+		EnhancedInputComponent->BindAction(ThrowCubeAction, ETriggerEvent::Triggered, this, &AXyzProjectCharacter::ThrowCube);
+		
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -190,4 +193,25 @@ void AXyzProjectCharacter::SitInACar()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetVisibility(false);
 	SetActorRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
+}
+
+void AXyzProjectCharacter::ThrowCube()
+{
+	if (!IsValid(ThrowItemType))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThrowingItemType is not valid"));
+		return;
+	}
+
+	FRotator SpawningRotation = GetActorRotation();
+	FVector SpawningLocation = GetActorLocation() + SpawningRotation.RotateVector(ThrowOffset);
+
+	AActor* SpawnedActor = GetWorld()->SpawnActor(ThrowItemType, &SpawningLocation, &SpawningRotation);
+	UPrimitiveComponent* SpawnedRootPrimitive = Cast<UPrimitiveComponent>(SpawnedActor->GetRootComponent());
+
+	if (IsValid(SpawnedRootPrimitive))
+	{
+		const bool IgnoreMassFlag = true;
+		SpawnedRootPrimitive->AddImpulse(RootComponent->GetForwardVector() * ThrowStartSpeed, NAME_None, IgnoreMassFlag);
+	}
 }
