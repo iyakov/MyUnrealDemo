@@ -49,10 +49,17 @@ class AXyzProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+protected:
+	
+	/** Active vehicle in range if any */
+	UPROPERTY(BlueprintReadOnly, Category = "AXYZ")
+	AWheeledVehiclePawn* CurrentAvailableCar;
+
 public:
 	
 	AXyzProjectCharacter();
 
+	/** Set the current available vehicle */
 	UFUNCTION(BlueprintCallable)
 	void SetActiveCar(AWheeledVehiclePawn* ActiveCar_In);
 
@@ -73,17 +80,15 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void BeginPlay() override;
+	
 public:
 	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-protected:
-	
-	UPROPERTY(BlueprintReadOnly)
-	AWheeledVehiclePawn* CurrentAvailableCar;
 };
 
 

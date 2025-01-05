@@ -11,6 +11,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "WheeledVehiclePawn.h"
+#include "XyzProjectGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -98,6 +100,43 @@ void AXyzProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void AXyzProjectCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UXyzProjectGameInstance* GameInstance = Cast<UXyzProjectGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (IsValid(GameInstance))
+	{
+		const int MainMaterialIndex = 0;
+		const int SecondaryMaterialIndex = 1;
+		FLinearColor PlayerColor(GameInstance->GetPlayerColor());
+		
+		UMaterialInstanceDynamic* MainMaterialInstance = GetMesh()->CreateDynamicMaterialInstance(MainMaterialIndex);
+		if (IsValid(MainMaterialInstance))
+		{
+			MainMaterialInstance->SetVectorParameterValue(FName("Tint"), PlayerColor);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create material instance"));
+		}
+
+		UMaterialInstanceDynamic* SecondaryMaterialInstance = GetMesh()->CreateDynamicMaterialInstance(SecondaryMaterialIndex);
+		if (IsValid(SecondaryMaterialInstance))
+		{
+			SecondaryMaterialInstance->SetVectorParameterValue(FName("Tint"), PlayerColor);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create material instance"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get game instance"));
 	}
 }
 
