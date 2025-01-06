@@ -10,6 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "WheeledVehiclePawn.h"
+#include "XyzProjectGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -54,6 +57,11 @@ AXyzProjectCharacter::AXyzProjectCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AXyzProjectCharacter::SetActiveCar(AWheeledVehiclePawn* ActiveCar_In)
+{
+	CurrentAvailableCar = ActiveCar_In;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -76,6 +84,12 @@ void AXyzProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
+		// Sitting in a car
+		EnhancedInputComponent->BindAction(SitInACarAction, ETriggerEvent::Triggered, this, &AXyzProjectCharacter::SitInACar);
+		
+		// Throwing cubes
+		EnhancedInputComponent->BindAction(ThrowCubeAction, ETriggerEvent::Triggered, this, &AXyzProjectCharacter::ThrowCube);
+		
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -89,6 +103,43 @@ void AXyzProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void AXyzProjectCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	UXyzProjectGameInstance* GameInstance = Cast<UXyzProjectGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (IsValid(GameInstance))
+	{
+		const int MainMaterialIndex = 0;
+		const int SecondaryMaterialIndex = 1;
+		FLinearColor PlayerColor(GameInstance->GetPlayerColor());
+		
+		UMaterialInstanceDynamic* MainMaterialInstance = GetMesh()->CreateDynamicMaterialInstance(MainMaterialIndex);
+		if (IsValid(MainMaterialInstance))
+		{
+			MainMaterialInstance->SetVectorParameterValue(FName("Tint"), PlayerColor);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create material instance"));
+		}
+
+		UMaterialInstanceDynamic* SecondaryMaterialInstance = GetMesh()->CreateDynamicMaterialInstance(SecondaryMaterialIndex);
+		if (IsValid(SecondaryMaterialInstance))
+		{
+			SecondaryMaterialInstance->SetVectorParameterValue(FName("Tint"), PlayerColor);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create material instance"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get game instance"));
 	}
 }
 
@@ -125,5 +176,42 @@ void AXyzProjectCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AXyzProjectCharacter::SitInACar()
+{
+	AController* CurrentController = GetController();
+
+	if (IsValid(CurrentController))
+	{
+		CurrentController->Possess(CurrentAvailableCar);
+	}
+	
+	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, TEXT("Attaching a third person pawn to the vehicle"));
+	AttachToActor(CurrentAvailableCar, FAttachmentTransformRules::KeepRelativeTransform);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetVisibility(false);
+	SetActorRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
+}
+
+void AXyzProjectCharacter::ThrowCube()
+{
+	if (!IsValid(ThrowItemType))
+	{
+		UE_LOG(LogTemp, Error, TEXT("ThrowingItemType is not valid"));
+		return;
+	}
+
+	FRotator SpawningRotation = GetActorRotation();
+	FVector SpawningLocation = GetActorLocation() + SpawningRotation.RotateVector(ThrowOffset);
+
+	AActor* SpawnedActor = GetWorld()->SpawnActor(ThrowItemType, &SpawningLocation, &SpawningRotation);
+	UPrimitiveComponent* SpawnedRootPrimitive = Cast<UPrimitiveComponent>(SpawnedActor->GetRootComponent());
+
+	if (IsValid(SpawnedRootPrimitive))
+	{
+		const bool IgnoreMassFlag = true;
+		SpawnedRootPrimitive->AddImpulse(RootComponent->GetForwardVector() * ThrowStartSpeed, NAME_None, IgnoreMassFlag);
 	}
 }

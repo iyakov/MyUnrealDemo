@@ -8,6 +8,16 @@ public class XyzProject : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
+			"ChaosVehicles"
+		});
+
+		PublicDependencyModuleNames.AddRange(new[]
+			{
+				"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
+				"MyXyzModule"
+			}
+		);
 	}
 }

@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class AWheeledVehiclePawn;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -36,6 +37,14 @@ class AXyzProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* JumpAction;
 
+	/** Sit in a car Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SitInACarAction;
+	
+	/** Throw cube forward Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ThrowCubeAction;
+
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -43,10 +52,32 @@ class AXyzProjectCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+	
+protected:
+	
+	/** Active vehicle in range if any */
+	UPROPERTY(BlueprintReadOnly, Category = "AXYZ")
+	AWheeledVehiclePawn* CurrentAvailableCar;
+	
+	/** Item type to trow */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "AXYZ")
+	TSubclassOf<AActor> ThrowItemType;
+	
+	/** Position to throw from */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "AXYZ")
+	FVector ThrowOffset = FVector::ZeroVector;
+
+	/** Initiatial throw speed */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "AXYZ")
+	float ThrowStartSpeed = 100.0f;
 
 public:
-	AXyzProjectCharacter();
 	
+	AXyzProjectCharacter();
+
+	/** Set the current available vehicle */
+	UFUNCTION(BlueprintCallable)
+	void SetActiveCar(AWheeledVehiclePawn* ActiveCar_In);
 
 protected:
 
@@ -55,7 +86,12 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
+	/** Called for setting in a car input */
+	void SitInACar();
+	
+	/** Called for setting in a car input */
+	void ThrowCube();
 
 protected:
 
@@ -63,10 +99,15 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void BeginPlay() override;
+	
 public:
+	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
+
 
